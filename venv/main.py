@@ -48,14 +48,16 @@ def SplitDifference(grid)->[]:
         C.append((func(grid[k]) - sum(C[i] * next(p) for i in range(k))) / next(p))
     return  C
 
-# Значение многочлена в точке x
+# Значение многочлена в точке x на сетке grid
 def PolynomialValue(x, grid):
     C = SplitDifference(grid)
     return sum(C[k] * p for k, p in enumerate(Product(x, len(C),grid)))
 
+# Перевод точки из равномерной сетке в Чебышевский узел
 def ChebyshevNode(x,i)->float:
     return  (xmin + xmax)/2 + (xmax - xmin)*(math.cos((2*i+1)*math.pi/(2*n+2)))/2
 
+# Получение Чебышевской сетки
 def GetChebyshevGrid(grid)->[]:
     ChebyshevGrid = []
     for i in range(len(grid)):
@@ -63,7 +65,6 @@ def GetChebyshevGrid(grid)->[]:
     return  ChebyshevGrid
 
 def main():
-    global  dx
 
     result = GetData('input.txt')
     if result == False:
@@ -72,7 +73,8 @@ def main():
     # мн-во точек построения для графика
     xlist = list(np.arange(xmin, xmax, dx))
     # график самой функции
-    pylab.plot(xlist, [func(x) for x in xlist])
+    ylist = [func(x) for x in xlist]
+    pylab.plot(xlist, ylist)
 
     # равномерная сетка
     uniformGrid = list(np.arange(xmin, xmax, float((xmin + xmax)/n)))
@@ -84,8 +86,8 @@ def main():
     # график многочлена по Чебышевской сетке
     pylab.plot(xlist, list(PolynomialValue(x, ChebyshevGrid) for x in xlist))
 
-    pylab.xlim(xmin, xmax)
-    pylab.ylim(-3.8,3.5)
+    pylab.xlim(xmin, xmax) # устанока оси X
+    pylab.ylim(min(ylist)-1,max(ylist)+1) # установка оси Y
 
     pylab.show()
 
